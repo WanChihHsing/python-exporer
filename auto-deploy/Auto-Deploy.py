@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-host = os.getenv("server_host")  # 服务器地址
+host = os.getenv("SERVER_HOST")  # 服务器地址
 port = int(os.getenv("SERVER_PORT"))  # SSH端口
-username = os.getenv("server_username")  # SSH用户名
-password = os.getenv("server_password")  # SSH密码
+username = os.getenv("SERVER_USERNAME")  # SSH用户名
+password = os.getenv("SERVER_PASSWORD")  # SSH密码
 directory = "/Users/wanwei/PrivateProjects/nmu-exam/"  # 本地项目所在文件夹
 
 # 初始化全局变量用于tqdm进度条
@@ -87,4 +87,4 @@ if __name__ == "__main__":
     system = "xueyi-modules-system.jar"
     tenant = "xueyi-modules-tenant.jar"
 
-    upload_and_deploy(gateway)
+    upload_and_deploy(nuv)
