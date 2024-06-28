@@ -1,3 +1,4 @@
+import json
 import os
 import socket
 import threading
@@ -31,6 +32,12 @@ def init_db():
             username VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
             login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS connections (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            ip VARCHAR(32) NOT NULL,
+            port INT NOT NULL,
+            conn_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
     conn.commit()
@@ -63,6 +70,23 @@ def log_attempt_mysql(username, password):
     conn.close()
 
 
+# Mysql记录连接尝试
+def log_conn_mysql(addr):
+    conn = pymysql.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_NAME
+    )
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO connections (ip, port, conn_time) VALUES (%s, %s, now())
+    ''', (addr[0], addr[1]))
+    conn.commit()
+    conn.close()
+
+
+
 # 创建一个假的服务器密钥
 host_key = paramiko.RSAKey.generate(2048)
 
@@ -92,6 +116,7 @@ def start_honeypot(port=22):
     while True:
         client, addr = server_socket.accept()
         print(f"[*] Connection from {addr}")
+        log_conn_mysql(addr)
         transport = paramiko.Transport(client)
         transport.add_server_key(host_key)
 
@@ -104,6 +129,9 @@ def start_honeypot(port=22):
             continue
         except EOFError:
             print("[!] EOFError")
+            continue
+        except ConnectionError:
+            print("[!] Unknown error")
             continue
 
         # 处理客户端连接
