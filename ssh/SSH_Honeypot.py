@@ -86,7 +86,6 @@ def log_conn_mysql(addr):
     conn.close()
 
 
-
 # 创建一个假的服务器密钥
 host_key = paramiko.RSAKey.generate(2048)
 
