@@ -14,7 +14,7 @@ DB_PASSWORD = os.getenv("NL_DB_PASSWORD")
 DB_NAME = os.getenv("NL_DB_NAME")
 
 # 读取 Excel 文件
-df = pd.read_excel('串码为空_fix.xlsx', sheet_name='Sheet1')
+df = pd.read_excel('手机_fix.xlsx', sheet_name='Sheet1')
 
 # 连接到 MySQL 数据库
 connection = pymysql.connect(
@@ -25,7 +25,7 @@ connection = pymysql.connect(
 )
 
 update_sql = """
-    UPDATE honor_order_2024_test
+    UPDATE honor_order_2024
     SET `create_order_time`      = %s,
         `shop_id`                = %s,
         `trade_no`               = %s,
@@ -68,13 +68,13 @@ update_sql = """
 """
 
 insert_sql = """
-    INSERT INTO honor_order_2024_test
+    INSERT INTO honor_order_2024
     VALUES (%s, %s, %s, %s, now(), %s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s,
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 """
 
 # 指定要删除的文件路径
-file_path = 'error_report.csv'
+file_path = 'error_report_平板.csv'
 
 # 检查文件是否存在
 if os.path.exists(file_path):
