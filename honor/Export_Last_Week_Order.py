@@ -27,28 +27,28 @@ def init():
     )
 
     _cursor = _conn.cursor(buffered=True)
-    # _cursor.execute('''
-    #     UPDATE honor_order_2024
-    #     SET push_status = 0,
-    #         update_time= now()
-    #     WHERE shipment_date >= %s
-    #       AND shipment_date <= %s
-    # ''', (begin_date, end_date))
-    #
-    # _cursor.execute('''
-    #     UPDATE honor_order_2024
-    #     SET push_status = -1
-    #     WHERE place_name in ('金华仓-JD-京东全渠道O2O履约', '金华仓-JD-京东自营', '金华仓-三君能良代发店铺')
-    #       AND shipment_date >= %s
-    #       AND shipment_date <= %s
-    # ''', (begin_date, end_date))
+    _cursor.execute('''
+        UPDATE honor_order_2024
+        SET push_status = 0,
+            update_time= now()
+        WHERE shipment_date >= %s
+          AND shipment_date <= %s
+    ''', (begin_date, end_date))
+
+    _cursor.execute('''
+        UPDATE honor_order_2024
+        SET push_status = -1
+        WHERE place_name in ('金华仓-JD-京东全渠道O2O履约', '金华仓-JD-京东自营', '金华仓-三君能良代发店铺')
+          AND shipment_date >= %s
+          AND shipment_date <= %s
+    ''', (begin_date, end_date))
 
     _cursor.execute('''
         DROP TEMPORARY TABLE IF EXISTS t1;
     ''')
 
     _cursor.execute('''
-        CREATE TEMPORARY table t1 
+        CREATE TEMPORARY table t1
         SELECT btc_order_id, count(*)
         FROM honor_order_2024
         WHERE shipment_date >= @begin_date
@@ -75,7 +75,7 @@ def order_nums_confirm(_conn):
           AND push_status != -1
         GROUP BY shop_id, place_name, channel_code;
     '''
-    _df = pd.read_sql(_query, _conn, params=(begin_date, end_date))
+    _df = pd.read_sql(_query, _conn)
     _df.to_excel('订单数量确认.xlsx', index=False)
 
 
