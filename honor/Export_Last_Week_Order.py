@@ -75,7 +75,7 @@ def order_nums_confirm(_conn):
           AND push_status != -1
         GROUP BY shop_id, place_name, channel_code;
     '''
-    _df = pd.read_sql(_query, _conn)
+    _df = pd.read_sql(_query, _conn, params=(begin_date, end_date))
     _df.to_excel('订单数量确认.xlsx', index=False)
 
 
